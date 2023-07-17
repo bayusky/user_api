@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 app.secret_key = ApplicationConfig.SECRET_KEY
 server_session = Session(app)
-user_collection = ApplicationConfig.DB['user']
+user_collection = ApplicationConfig.DB['user'] #collection name : user
         
 
 
