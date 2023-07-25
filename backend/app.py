@@ -4,6 +4,8 @@ from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import ApplicationConfig
 from flask_session import Session
+import secrets
+from mail import mailer
      
 
 app = Flask(__name__)
@@ -35,7 +37,10 @@ def add_user():
       resp = jsonify("Email exist!")
       return(resp)
     else:
-      id = user_collection.insert_one({'name': _name , 'email' : _email, 'password' : _hashed_password})
+      verify_token = secrets.token_urlsafe(30*3//4)
+      user_collection.insert_one({'name': _name , 'email' : _email, 'password' : _hashed_password, 'verify_token': verify_token})
+      flag = "register"
+      mailer(_email, verify_token, flag)
 
       resp = jsonify("User added succesfully!")
       resp.status_code = 200

@@ -14,3 +14,11 @@ class ApplicationConfig:
     SESSION_PERMANENT = False
     SESSION_USE_SIGNER = True
     SESSION_REDIS = redis.from_url("redis://127.0.0.1:6379")
+
+class MailerConfig:
+    SMTP_RELAY = os.environ["SMTP_RELAY"]
+    SMTP_USER = os.environ["SMTP_USER"]
+    SMTP_PORT = os.environ["SMTP_PORT"]
+    SMTP_PASSWORD = os.environ["SMTP_PASSWORD"]
+    #SMTP_ENCRYPTION = os.environ["SMTP_ENCRYPTION"]
+    
