@@ -5,7 +5,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from config import ApplicationConfig
 from flask_session import Session
 import secrets
-from mail import mailer
+from routes.user import reg_user
+from routes.not_found import not_found
      
 
 app = Flask(__name__)
@@ -16,38 +17,11 @@ user_collection = ApplicationConfig.DB['user'] #collection name : user
         
 
 
-@app.route('/users', methods=['GET'])
-def users():
-  users = user_collection.find()
-  resp = dumps(users)
-  return resp
-
-@app.route('/register', methods=['POST'])
+@app.route('/user/register', methods=['POST'])
 def add_user():
-  _json =request.json
-  _name = _json['name']
-  _email = _json['email']
-  _password = _json['password']
-
-  if _name and _email and _password and request.method == 'POST':
-    _hashed_password = generate_password_hash(_password)
-    print(_hashed_password)
-    existing_mail = user_collection.find_one({'email': _email})
-    if existing_mail:
-      resp = jsonify("Email exist!")
-      return(resp)
-    else:
-      verify_token = secrets.token_urlsafe(30*3//4)
-      user_collection.insert_one({'name': _name , 'email' : _email, 'password' : _hashed_password, 'verify_token': verify_token})
-      flag = "register"
-      mailer(_email, verify_token, flag)
-
-      resp = jsonify("User added succesfully!")
-      resp.status_code = 200
-
-      return resp
-  else:
-    return not_found()
+  resp = reg_user(user_collection, request)
+  return resp
+  
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -94,16 +68,6 @@ def update_user(id):
     return resp
   else:
     return not_found
-
-@app.errorhandler(404)
-def not_found(error=None):
-  message = {
-    'status' : 404,
-    'message' : 'Not Found' + request.url
-  }
-  resp = jsonify(message)
-  resp.status_code = 404
-  return resp
 
 if __name__ == "__main__" :
     app.run(debug=True)
