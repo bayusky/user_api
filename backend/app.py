@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from flask_bcrypt import Bcrypt
 from bson.json_util import dumps
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -10,6 +11,7 @@ from routes.not_found import not_found
      
 
 app = Flask(__name__)
+Bcrypt = Bcrypt(app)
 
 app.secret_key = ApplicationConfig.SECRET_KEY
 server_session = Session(app)

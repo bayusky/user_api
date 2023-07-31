@@ -1,4 +1,5 @@
 flask
+flask-bcrypt
 flask-session
 flask-cors
 bcrypt
